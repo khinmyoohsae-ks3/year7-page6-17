@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KS3 Computing Quiz: Getting Started (Pages 6–17)</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --correct-bg: #dcfce7;
+      --correct-border: #16a34a;
+      --correct-text: #14532d;
+      --wrong-bg: #fee2e2;
+      --wrong-border: #dc2626;
+      --wrong-text: #7f1d1d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .app-container {
+      background: var(--card);
+      width: 100%;
+      max-width: 720px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+      padding: 32px;
+      border: 1px solid var(--border);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .title-group h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .title-group p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .score-badge {
+      background: #eff6ff;
+      color: var(--primary);
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .topic-tag {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 6px;
+      color: #334155;
+    }
+
+    .question-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      padding: 15px 18px;
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: #f8fafc;
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-letter {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .option-btn.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct-border);
+      color: var(--correct-text);
+    }
+
+    .option-btn.correct .option-letter {
+      background: var(--correct-border);
+      color: #ffffff;
+    }
+
+    .option-btn.wrong {
+      background: var(--wrong-bg);
+      border-color: var(--wrong-border);
+      color: var(--wrong-text);
+    }
+
+    .option-btn.wrong .option-letter {
+      background: var(--wrong-border);
+      color: #ffffff;
+    }
+
+    .feedback-box {
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      display: none;
+    }
+
+    .feedback-box.correct {
+      display: block;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    .feedback-box.wrong {
+      display: block;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 12px 22px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .btn-primary:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .btn-secondary:hover {
+      background: #cbd5e1;
+    }
+
+    /* Results View */
+    .results-container {
+      text-align: center;
+      display: none;
+    }
+
+    .results-container h2 {
+      font-size: 1.75rem;
+      margin-bottom: 8px;
+    }
+
+    .final-score {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 16px 0;
+    }
+
+    .review-list {
+      text-align: left;
+      margin-top: 28px;
+      max-height: 360px;
+      overflow-y: auto;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    .review-item {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .review-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .tag-pass {
+      color: #16a34a;
+      font-weight: 700;
+    }
+
+    .tag-fail {
+      color: #dc2626;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Quiz View -->
+  <div id="quiz-view">
+    <div class="header">
+      <div class="title-group">
+        <h1>KS3 Computing: Getting Started</h1>
+        <p>Chapter 1 Revision Quiz (Pages 6–17)</p>
+      </div>
+      <div class="score-badge" id="score-display">Score: 0 / 30</div>
+    </div>
+
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="meta-row">
+      <span id="question-counter">Question 1 of 30</span>
+      <span class="topic-tag" id="topic-tag">Topic</span>
+    </div>
+
+    <div class="question-text" id="question-text">Loading question...</div>
+
+    <div class="options-list" id="options-list"></div>
+
+    <div class="feedback-box" id="feedback-box"></div>
+
+    <div class="controls">
+      <button class="btn btn-secondary" id="restart-btn-top" onclick="restartQuiz()">Restart</button>
+      <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()" disabled>Next Question &rarr;</button>
+    </div>
+  </div>
+
+  <!-- Results View -->
+  <div class="results-container" id="results-view">
+    <h2>Quiz Complete!</h2>
+    <p style="color: var(--muted);">Progress in Computing KS3 — Pages 6–17</p>
+    <div class="final-score" id="final-score">0 / 30</div>
+    <p id="performance-msg" style="margin-bottom: 20px; font-weight: 500;"></p>
+    <button class="btn btn-primary" onclick="restartQuiz()">Try Again</button>
+
+    <div class="review-list" id="review-list"></div>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    {
+      topic: "1.1 Logging in (Page 6)",
+      question: "What is a computer network?",
+      options: [
+        "A single desktop computer with a fast processor",
+        "A collection of computers and other digital devices connected together",
+        "A type of software used to edit photographs",
+        "An online search engine for school research"
+      ],
+      answer: 1,
+      explanation: "A computer network is a collection of computers and other digital devices (like printers, laptops, and servers) connected together."
+    },
+    {
+      topic: "1.1 Logging in (Page 6)",
+      question: "Which of the following is a rule for using computer equipment safely?",
+      options: [
+        "Swap keyboards and mice if yours is dirty",
+        "Keep your school bag on the desk next to the monitor",
+        "Do not eat or drink near computers",
+        "Leave monitors switched on when asked to turn them off"
+      ],
+      answer: 2,
+      explanation: "Spills and crumbs can damage hardware, so you must never eat or drink near computers."
+    },
+    {
+      topic: "1.1 Logging in (Page 6)",
+      question: "What is a school's 'acceptable use policy'?",
+      options: [
+        "A guide on how to format spreadsheets",
+        "The rules that govern how a computer network should be used",
+        "A list of free software you are allowed to install",
+        "A timetable showing when computer rooms are open"
+      ],
+      answer: 1,
+      explanation: "An acceptable use policy sets out the rules governing how the school network and equipment must be used."
+    },
+    {
+      topic: "1.1 Logging in (Page 7)",
+      question: "Why do computer systems require users to log in with a username and password?",
+      options: [
+        "To prove the user's identity so they can access their own files and programs",
+        "To automatically back up the computer's hard drive",
+        "To increase the internet connection speed",
+        "To convert vector graphics into bitmap graphics"
+      ],
+      answer: 0,
+      explanation: "Logging in proves your identity so the system grants access to your personal files and programs."
+    },
+    {
+      topic: "1.1 Logging in (Page 7)",
+      question: "Which of the following is an example of biometrics used to prove identity?",
+      options: [
+        "A 12-character password",
+        "A school email address",
+        "Fingerprint or facial recognition",
+        "A file extension"
+      ],
+      answer: 2,
+      explanation: "Biometrics use physical characteristics such as fingerprints or facial recognition to prove identity."
+    },
+    {
+      topic: "1.1 Logging in (Page 7)",
+      question: "What are the three elements that help increase the strength of a password?",
+      options: [
+        "Length, range of characters, and randomness",
+        "Your name, date of birth, and favourite colour",
+        "Shortness, all lowercase letters, and dictionary words",
+        "File size, resolution, and colour depth"
+      ],
+      answer: 0,
+      explanation: "Strong passwords combine length (at least 8 characters), a range of character types, and randomness."
+    },
+    {
+      topic: "1.1 Logging in (Page 7)",
+      question: "Which rule should you follow when emailing a teacher?",
+      options: [
+        "Leave the subject line blank so they open it quickly",
+        "Use text speak and acronyms to keep the email short",
+        "Fill in the subject line, use polite English, and sign off with your full name and form",
+        "Always send school emails from your personal email account"
+      ],
+      answer: 2,
+      explanation: "Professional emails include a clear subject line, polite grammatically correct English, and your full name and form."
+    },
+    {
+      topic: "1.1 Logging in (Page 7)",
+      question: "What does VLE stand for?",
+      options: [
+        "Visual Layer Editor",
+        "Virtual Learning Environment",
+        "Verified Login Encryption",
+        "Vector Line Extension"
+      ],
+      answer: 1,
+      explanation: "VLE stands for Virtual Learning Environment, an online system storing learning resources and assignments."
+    },
+    {
+      topic: "1.2 File management (Page 8)",
+      question: "What is a folder stored inside another folder technically called?",
+      options: [
+        "A document",
+        "A sub-folder",
+        "A file extension",
+        "A server farm"
+      ],
+      answer: 1,
+      explanation: "A folder contained within another folder is called a sub-folder."
+    },
+    {
+      topic: "1.2 File management (Page 9)",
+      question: "What is the purpose of a file extension (such as .docx, .jpg, or .mp3)?",
+      options: [
+        "It tells the computer what type of file it is so the correct software opens it",
+        "It automatically encrypts the file with a password",
+        "It reduces the image resolution to 300 dpi",
+        "It uploads the file to Google Drive"
+      ],
+      answer: 0,
+      explanation: "The file extension (usually 3 or 4 characters) identifies the file format so the OS uses the right program to open it."
+    },
+    {
+      topic: "1.2 File management (Page 9)",
+      question: "Which file extension indicates a spreadsheet file?",
+      options: [
+        ".wav",
+        ".pptx",
+        ".xlsx",
+        ".svg"
+      ],
+      answer: 2,
+      explanation: ".xls and .xlsx are common spreadsheet file extensions."
+    },
+    {
+      topic: "1.2 File management (Page 9)",
+      question: "What keyboard shortcut quickly saves changes to an existing file in Windows?",
+      options: [
+        "CTRL + X",
+        "CTRL + S",
+        "CTRL + Z",
+        "CTRL + V"
+      ],
+      answer: 1,
+      explanation: "CTRL + S (or CMD + S on macOS) saves changes to the original file."
+    },
+    {
+      topic: "1.2 Cloud computing (Page 9)",
+      question: "What is cloud computing?",
+      options: [
+        "Storing all files locally on a USB flash drive",
+        "Storing data online and using software via an internet browser rather than a local hard drive",
+        "Printing documents wirelessly in school",
+        "Using GIMP to edit transparent layers"
+      ],
+      answer: 1,
+      explanation: "Cloud computing stores data on remote servers and runs software through a web browser over the internet."
+    },
+    {
+      topic: "1.2 Cloud computing (Page 9)",
+      question: "Which of the following is a DISADVANTAGE of cloud computing?",
+      options: [
+        "Data is backed up automatically",
+        "Files can be accessed from any computer with internet",
+        "Data and software cannot be accessed without an internet connection",
+        "Software updates automatically online"
+      ],
+      answer: 2,
+      explanation: "Because data and apps live on remote servers, you cannot access them if you have no internet connection."
+    },
+    {
+      topic: "1.3 The internet & wellbeing (Page 10)",
+      question: "Which criterion helps you check the 'currency' of information on a website?",
+      options: [
+        "Whether the author uses text speak",
+        "When the article was written and whether it has been updated recently",
+        "How much money the website costs to access",
+        "Whether the website contains vector images"
+      ],
+      answer: 1,
+      explanation: "Currency refers to how up-to-date the information is and when it was published or revised."
+    },
+    {
+      topic: "1.3 The internet & wellbeing (Page 10)",
+      question: "What is the best way to enter a query into a search engine?",
+      options: [
+        "Type a full paragraph explaining everything you know",
+        "Use specific keywords rather than long phrases",
+        "Only use capital letters so the search engine understands",
+        "Avoid using category tabs like Images or News"
+      ],
+      answer: 1,
+      explanation: "Using targeted keywords instead of long sentences yields the most relevant search results."
+    },
+    {
+      topic: "1.3 The internet & wellbeing (Page 11)",
+      question: "What is meant by 'digital wellbeing'?",
+      options: [
+        "Having the fastest gaming computer at home",
+        "Having a healthy relationship with technology",
+        "Never using the internet for school homework",
+        "Keeping your computer free from viruses"
+      ],
+      answer: 1,
+      explanation: "Digital wellbeing is about maintaining a healthy, balanced relationship with digital technology."
+    },
+    {
+      topic: "1.3 The internet & wellbeing (Page 11)",
+      question: "Which of these is a recommended tip for managing your digital technology usage?",
+      options: [
+        "Keep all app notifications turned on at night",
+        "Put your device into 'Do not disturb' mode before going to bed",
+        "Check your phone immediately upon waking up",
+        "Spend at least six hours online every evening"
+      ],
+      answer: 1,
+      explanation: "Using 'Do not disturb' before bed or during homework prevents distractions and disturbed sleep."
+    },
+    {
+      topic: "1.4 Vector graphics (Page 12)",
+      question: "How are vector graphics stored by a computer?",
+      options: [
+        "As a grid of coloured dots called pixels",
+        "As a list of attributes for geometric shapes (objects), such as coordinates, fill colour, and line width",
+        "As a single compressed video stream",
+        "As binary codes for every individual dot on an A4 page"
+      ],
+      answer: 1,
+      explanation: "Vector graphics store mathematical attributes (x/y coordinates, fill colour, line width) for shapes called objects."
+    },
+    {
+      topic: "1.4 Vector graphics (Page 12)",
+      question: "Vector graphics are 'scalable'. What does this mean?",
+      options: [
+        "They can only be viewed on mobile phones",
+        "They can be enlarged to any size without any loss in quality",
+        "They automatically delete their background layer",
+        "Their file size doubles every time you zoom in"
+      ],
+      answer: 1,
+      explanation: "Because vector graphics are redrawn from mathematical attributes, scaling them up never causes pixelation or quality loss."
+    },
+    {
+      topic: "1.4 Vector graphics (Page 12)",
+      question: "Which of the following is a common vector graphic file format?",
+      options: [
+        ".svg",
+        ".jpg",
+        ".bmp",
+        ".gif"
+      ],
+      answer: 0,
+      explanation: ".svg (Scalable Vector Graphics) and .eps are common vector graphic file formats."
+    },
+    {
+      topic: "1.5 Bitmap graphics (Page 14)",
+      question: "What is a 'pixel'?",
+      options: [
+        "A single dot in a bitmap image (short for 'picture element')",
+        "A mathematical line connecting two coordinates",
+        "A type of vector graphic file",
+        "A tool used to group objects in Word"
+      ],
+      answer: 0,
+      explanation: "Bitmap (raster) graphics are made of a matrix of dots; each dot is a pixel ('picture element')."
+    },
+    {
+      topic: "1.5 Bitmap graphics (Page 14)",
+      question: "What determines the quality of a bitmap image?",
+      options: [
+        "Its file name",
+        "Its resolution (the number of pixels in the image)",
+        "The number of folders on the hard drive",
+        "Whether it was sent by email"
+      ],
+      answer: 1,
+      explanation: "Resolution (measured in dots per inch, dpi, or total pixels) determines how sharp and realistic a bitmap image is."
+    },
+    {
+      topic: "1.5 Bitmap graphics (Page 14)",
+      question: "What happens when you enlarge or zoom into a bitmap graphic?",
+      options: [
+        "It becomes sharper and smoother",
+        "It loses quality and individual pixels become visible",
+        "It automatically converts into an .svg file",
+        "Its resolution increases to 300 dpi"
+      ],
+      answer: 1,
+      explanation: "Enlarging a bitmap stretches its fixed grid of pixels, making the image look blocky or pixelated."
+    },
+    {
+      topic: "1.5 Bitmap graphics (Page 14)",
+      question: "Which bitmap format is good for web images and supports up to 16 million colours?",
+      options: [
+        ".png",
+        ".gif",
+        ".eps",
+        ".txt"
+      ],
+      answer: 0,
+      explanation: ".png (Portable Network Graphics) supports up to 16 million colours and transparency, making it ideal for web images."
+    },
+    {
+      topic: "1.5 Bitmap graphics (Page 15)",
+      question: "In GIMP, why do you click 'Add Alpha Channel' to a layer before removing the background?",
+      options: [
+        "To convert the image to black and white",
+        "To allow erased areas of the layer to become transparent instead of a solid background colour",
+        "To double the width and height of the canvas",
+        "To save the file as a PDF"
+      ],
+      answer: 1,
+      explanation: "An alpha channel stores transparency information so deleted background pixels become see-through."
+    },
+    {
+      topic: "1.5 Bitmap graphics (Page 15)",
+      question: "Which GIMP tool selects a continuous area of similar colour when you click on it?",
+      options: [
+        "Scale Tool",
+        "Fuzzy Select Tool",
+        "Rectangle Select Tool",
+        "Text Tool"
+      ],
+      answer: 1,
+      explanation: "The Fuzzy Select Tool selects contiguous regions of similar colour, adjustable with the 'Threshold' slider."
+    },
+    {
+      topic: "1.6 Impossible photographs (Page 16)",
+      question: "When creating a new canvas in GIMP for an 'impossible' photograph, what should 'Fill with' be set to?",
+      options: [
+        "Foreground colour",
+        "Pattern",
+        "Transparency",
+        "White"
+      ],
+      answer: 2,
+      explanation: "Setting 'Fill with' to Transparency ensures layers can be combined cleanly without opaque white boxes."
+    },
+    {
+      topic: "1.6 Impossible photographs (Page 16)",
+      question: "Which GIMP tool is used to resize an image or cut-out layer using handles?",
+      options: [
+        "Fuzzy Select Tool",
+        "Scale Tool",
+        "Free Select Tool",
+        "Invert Tool"
+      ],
+      answer: 1,
+      explanation: "The Scale Tool lets you drag corner/edge handles to resize a layer to fit the canvas or background."
+    },
+    {
+      topic: "1.6 Impossible photographs (Page 15 & 17)",
+      question: "What helps make a combined 'impossible' photograph look realistic?",
+      options: [
+        "Feathering (blurring) the edges of the cut-out and scaling/matching proportions carefully",
+        "Saving the image at the lowest possible resolution",
+        "Using bright red outlines around every cut-out",
+        "Flattening all layers before positioning the subject"
+      ],
+      answer: 0,
+      explanation: "Feathering edges smooths harsh cut-out lines, and matching scale/lighting helps blended images look realistic."
+    }
+  ];
+
+  let currentIndex = 0;
+  let score = 0;
+  let userAnswers = [];
+
+  const questionCounterEl = document.getElementById("question-counter");
+  const topicTagEl = document.getElementById("topic-tag");
+  const questionTextEl = document.getElementById("question-text");
+  const optionsListEl = document.getElementById("options-list");
+  const feedbackBoxEl = document.getElementById("feedback-box");
+  const nextBtnEl = document.getElementById("next-btn");
+  const scoreDisplayEl = document.getElementById("score-display");
+  const progressBarEl = document.getElementById("progress-bar");
+  const quizViewEl = document.getElementById("quiz-view");
+  const resultsViewEl = document.getElementById("results-view");
+
+  function loadQuestion() {
+    const q = questions[currentIndex];
+    questionCounterEl.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+    topicTagEl.textContent = q.topic;
+    questionTextEl.textContent = q.question;
+    progressBarEl.style.width = `${((currentIndex) / questions.length) * 100}%`;
+
+    feedbackBoxEl.className = "feedback-box";
+    feedbackBoxEl.textContent = "";
+    nextBtnEl.disabled = true;
+    nextBtnEl.textContent = currentIndex === questions.length - 1 ? "Finish Quiz" : "Next Question →";
+
+    optionsListEl.innerHTML = "";
+    const letters = ["A", "B", "C", "D"];
+
+    q.options.forEach((optionText, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.innerHTML = `<span class="option-letter">${letters[idx]}</span><span>${optionText}</span>`;
+      btn.onclick = () => selectOption(idx);
+      optionsListEl.appendChild(btn);
+    });
+  }
+
+  function selectOption(selectedIdx) {
+    const q = questions[currentIndex];
+    const buttons = optionsListEl.querySelectorAll(".option-btn");
+    const isCorrect = selectedIdx === q.answer;
+
+    buttons.forEach((btn, idx) => {
+      btn.disabled = true;
+      if (idx === q.answer) {
+        btn.classList.add("correct");
+      } else if (idx === selectedIdx && !isCorrect) {
+        btn.classList.add("wrong");
+      }
+    });
+
+    if (isCorrect) {
+      score++;
+      scoreDisplayEl.textContent = `Score: ${score} / ${questions.length}`;
+      feedbackBoxEl.className = "feedback-box correct";
+      feedbackBoxEl.innerHTML = `<strong>Correct!</strong> ${q.explanation}`;
+    } else {
+      feedbackBoxEl.className = "feedback-box wrong";
+      feedbackBoxEl.innerHTML = `<strong>Incorrect.</strong> ${q.explanation}`;
+    }
+
+    userAnswers.push({
+      question: q.question,
+      selected: q.options[selectedIdx],
+      correct: q.options[q.answer],
+      isCorrect: isCorrect
+    });
+
+    nextBtnEl.disabled = false;
+  }
+
+  function nextQuestion() {
+    currentIndex++;
+    if (currentIndex < questions.length) {
+      loadQuestion();
+    } else {
+      showResults();
+    }
+  }
+
+  function showResults() {
+    progressBarEl.style.width = "100%";
+    quizViewEl.style.display = "none";
+    resultsViewEl.style.display = "block";
+
+    document.getElementById("final-score").textContent = `${score} / ${questions.length}`;
+
+    const percentage = Math.round((score / questions.length) * 100);
+    let msg = "";
+    if (percentage >= 85) {
+      msg = `Outstanding (${percentage}%)! You've mastered Chapter 1.`;
+    } else if (percentage >= 60) {
+      msg = `Good effort (${percentage}%)! Review the missed topics below to hit 100%.`;
+    } else {
+      msg = `You scored ${percentage}%. Review pages 6–17 and try again!`;
+    }
+    document.getElementById("performance-msg").textContent = msg;
+
+    const reviewListEl = document.getElementById("review-list");
+    reviewListEl.innerHTML = "<h3 style='margin-bottom:12px;'>Question Review</h3>";
+
+    userAnswers.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.className = "review-item";
+      div.innerHTML = `
+        <strong>Q${index + 1}: ${item.question}</strong>
+        <span class="${item.isCorrect ? "tag-pass" : "tag-fail"}">
+          ${item.isCorrect ? "✓ Correct" : "✗ Your answer: " + item.selected}
+        </span>
+        ${!item.isCorrect ? `<br><span style="color:#334155;">Correct answer: <b>${item.correct}</b></span>` : ""}
+      `;
+      reviewListEl.appendChild(div);
+    });
+  }
+
+  function restartQuiz() {
+    currentIndex = 0;
+    score = 0;
+    userAnswers = [];
+    scoreDisplayEl.textContent = `Score: 0 / ${questions.length}`;
+    resultsViewEl.style.display = "none";
+    quizViewEl.style.display = "block";
+    loadQuestion();
+  }
+
+  // Initialize quiz
+  loadQuestion();
+</script>
+
+</body>
+</html>
